@@ -16,6 +16,8 @@ args <- arg_parser("Run a single chain of the sleep data analysis used in my the
 args <- add_argument(args, "iterations", help="Number of MCMC iterations that are used to sample the posterior distribution of the parameters.", type = "numeric", default = NULL)
 args <- add_argument(args, "burn_in", help="Number of samples that will be discarded (burn-in samples) at the beginning of the chain.", type = "numeric", default = NULL)
 args <- add_argument(args, "--variables", help="1 to 3 character names of the variables to be used in the analysis. Three values are expected. Accepted variable names are: 'EEG_Fpz_Cz_mean_theta', 'EEG_Fpz_Cz_mean_beta', 'EOG_min_beta', 'EOG_median_theta'", nargs=3, default = c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta"))
+args <- add_argument(args, "--seed", help="Random seed to be used for generating start values. Defaults to NULL, meaning that a random seed is generated. This seed is added to the model output.",
+                     type = "numeric", default = NULL)
 # Parse
 argv <- parse_args(args)
 
@@ -23,7 +25,7 @@ argv <- parse_args(args)
 log_info("Application is starting up ...")
 
 # Main function
-main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables = argv$variables) {
+main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables = argv$variables, seed = argv$seed) {
   # Read sleep data
   sleepdat <- readRDS("app/sleep_data_subset.rds")
   # Load summary statistics
@@ -51,6 +53,16 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   if(!all(variables %in% c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta"))) {
     stop('Variables must match three of "EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta" exactly.')
   }
+  if(!is.null(seed)) {
+    if(seed <= 0) {
+      stop("Seed cannot be equal to or less than 0.")
+    }
+  } else {
+    # Draw seed
+    seed <- sample.int(10000000, 1)
+  }
+  # Set seed
+  set.seed(seed)
   # Force ordering of variables
   if('EEG_Fpz_Cz_mean_theta' %in% variables) {
     order <- c(
@@ -80,9 +92,6 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
     sss$mmvar[4:6],
     sss$mmvar[7:9]
   )
-  # Draw seed and set
-  seed <- sample.int(10000000, 1)
-  set.seed(seed)
   # Initial values
   ## TPM gamma
   diag_value <- runif(1, 0.6, 0.8)
@@ -144,7 +153,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
     "model" = mod
   )
   # Save model
-  saveRDS(mod, paste0("/var/sleepsimr_sleepdata_analysis/model_", uid, ".rds"))
+  saveRDS(results, paste0("/var/sleepsimr_sleepdata_analysis/model_", uid, ".rds"))
 }
 
 # call main
