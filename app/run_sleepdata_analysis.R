@@ -4,7 +4,7 @@
 ## For more information about the analysis, please visit
 ##   <https://github.com/JasperHG90/sleepsimR-documentation>
 ##
-## Version: 0.01b
+## Version: 0.2
 
 library(sleepsimR)
 library(argparser, quietly=TRUE)
@@ -53,7 +53,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   if(!all(variables %in% c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta"))) {
     stop('Variables must match three of "EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta" exactly.')
   }
-  if(!is.null(seed)) {
+  if(!is.na(seed)) {
     if(seed <= 0) {
       stop("Seed cannot be equal to or less than 0.")
     }
@@ -67,14 +67,14 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   if('EEG_Fpz_Cz_mean_theta' %in% variables) {
     order <- c(
       "EEG_Fpz_Cz_mean_theta" = 1,
-      "EOG_min_beta" = 2,
-      "EOG_median_theta" = 3
+      "EOG_median_theta" = 2,
+      "EOG_min_beta" = 3
     )
   } else {
     order <- c(
       "EEG_Fpz_Cz_mean_beta" = 1,
-      "EOG_min_beta" = 2,
-      "EOG_median_theta" = 3
+      "EOG_median_theta" = 2,
+      "EOG_min_beta" = 3
     )
   }
   variables <- variables[order(match(variables,names(order)))]
@@ -158,4 +158,3 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
 
 # call main
 main()
-

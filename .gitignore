@@ -3,3 +3,4 @@
 sleepsimR-sleepdata-analysis.Rproj
 runfile
 sleepsimR/*
+*.rds
