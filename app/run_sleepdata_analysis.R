@@ -15,7 +15,7 @@ args <- arg_parser("Run a single chain of the sleep data analysis used in my the
 # Add arguments
 args <- add_argument(args, "iterations", help="Number of MCMC iterations that are used to sample the posterior distribution of the parameters.", type = "numeric", default = NULL)
 args <- add_argument(args, "burn_in", help="Number of samples that will be discarded (burn-in samples) at the beginning of the chain.", type = "numeric", default = NULL)
-args <- add_argument(args, "variables", help="1 to 4 character names of the variables to be used in the analysis. Three values are expected. Accepted variable names are: 'EEG_Fpz_Cz_mean_theta', 'EEG_Fpz_Cz_mean_beta', 'EOG_min_beta', 'EOG_median_theta'", nargs=3, default = c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta"))
+args <- add_argument(args, "--variables", help="1 to 3 character names of the variables to be used in the analysis. Three values are expected. Accepted variable names are: 'EEG_Fpz_Cz_mean_theta', 'EEG_Fpz_Cz_mean_beta', 'EOG_min_beta', 'EOG_median_theta'", nargs=3, default = c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta"))
 # Parse
 argv <- parse_args(args)
 
@@ -45,7 +45,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   if(burn_in >= iterations) {
     stop("Number of iterations must be larger than the number of burn-in samples.")
   }
-  if(all("EEG_Fpz_Cz_mean_theta", "EEG_Fpz_Cz_mean_beta") %in% variables) {
+  if(all(c("EEG_Fpz_Cz_mean_theta", "EEG_Fpz_Cz_mean_beta") %in% variables)) {
     stop("Cannot use both 'EEG_Fpz_Cz_mean_theta' and 'EEG_Fpz_Cz_mean_beta' in analysis.")
   }
   if(!all(variables %in% c("EEG_Fpz_Cz_mean_theta", "EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta"))) {
@@ -65,7 +65,6 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
       "EOG_median_theta" = 3
     )
   }
-  variables <- c("EOG_min_beta", "EOG_median_theta", "EEG_Fpz_Cz_mean_beta")
   variables <- variables[order(match(variables,names(order)))]
   # Model properties
   mprop = list(
@@ -96,7 +95,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   # For the 3 continuous emission distributions
   start_EM <- list(
     # Gamma
-    start_gamma,
+    gam,
     #EEG_Fpz_Cz_max_gamma
     matrix(c( sss$mmvar[1] + runif(1, -0.05, 0.05), total_var$tvar[1]+ runif(1, -0.05, 0.05),
               sss$mmvar[2] + runif(1, -0.05, 0.05), total_var$tvar[2]+ runif(1, -0.05, 0.05),
@@ -131,7 +130,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
                              seed,
                              mcmc_iterations=iterations,
                              mcmc_burn_in=burn_in,
-                             show_progress = FALSE,
+                             show_progress = TRUE,
                              order_data = FALSE)
   # Make results
   results <- list(
@@ -148,5 +147,6 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
   saveRDS(mod, paste0("/var/sleepsimr_sleepdata_analysis/model_", uid, ".rds"))
 }
 
-
+# call main
+main()
 
