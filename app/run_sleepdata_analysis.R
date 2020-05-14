@@ -106,23 +106,23 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
     # Gamma
     gam,
     #EEG_Fpz_Cz_max_gamma
-    matrix(c( sss$mmvar[1] + runif(1, -0.01, 0.01), total_var$tvar[1]+ runif(1, -0.01, 0.01),
-              sss$mmvar[2] + runif(1, -0.01, 0.01), total_var$tvar[2]+ runif(1, -0.01, 0.01),
-              sss$mmvar[3] + runif(1, -0.01, 0.01), total_var$tvar[3] + runif(1, -0.01, 0.01)),
+    matrix(c( sss$mmvar[1] + runif(1, -0.05, 0.05), total_var$tvar[1]+ runif(1, -0.05, 0.05),
+              sss$mmvar[2] + runif(1, -0.05, 0.05), total_var$tvar[2]+ runif(1, -0.05, 0.05),
+              sss$mmvar[3] + runif(1, -0.05, 0.05), total_var$tvar[3] + runif(1, -0.05, 0.05)),
            nrow=mprop$m,
            ncol=2,
            byrow = TRUE),
     # EOG_median_theta
-    matrix(c( sss$mmvar[4]+ runif(1, -0.01, 0.01), total_var$tvar[4]+ runif(1, -0.01, 0.01),
-              sss$mmvar[5]+ runif(1, -0.01, 0.01), total_var$tvar[5]+ runif(1, -0.01, 0.01),
-              sss$mmvar[6]+ runif(1, -0.01, 0.01), total_var$tvar[6]+ runif(1, -0.01, 0.01)),
+    matrix(c( sss$mmvar[4]+ runif(1, -0.05, 0.05), total_var$tvar[4]+ runif(1, -0.05, 0.05),
+              sss$mmvar[5]+ runif(1, -0.05, 0.05), total_var$tvar[5]+ runif(1, -0.05, 0.05),
+              sss$mmvar[6]+ runif(1, -0.05, 0.05), total_var$tvar[6]+ runif(1, -0.05, 0.05)),
            nrow=mprop$m,
            ncol=2,
            byrow = TRUE),
     # EOG_min_beta
-    matrix(c( sss$mmvar[7]+ runif(1, -0.01, 0.01), total_var$tvar[7]+ runif(1, -0.01, 0.01),
-              sss$mmvar[8]+ runif(1, -0.01, 0.01), total_var$tvar[8]+ runif(1, -0.01, 0.01),
-              sss$mmvar[9]+ runif(1, -0.01, 0.01), total_var$tvar[9]+ runif(1, -0.01, 0.01)),
+    matrix(c( sss$mmvar[7]+ runif(1, -0.05, 0.05), total_var$tvar[7]+ runif(1, -0.05, 0.05),
+              sss$mmvar[8]+ runif(1, -0.05, 0.05), total_var$tvar[8]+ runif(1, -0.05, 0.05),
+              sss$mmvar[9]+ runif(1, -0.05, 0.05), total_var$tvar[9]+ runif(1, -0.05, 0.05)),
            nrow=mprop$m,
            ncol=2,
            byrow = TRUE)
@@ -140,7 +140,7 @@ main <- function(iterations = argv$iterations, burn_in = argv$burn_in, variables
                              mcmc_iterations=iterations,
                              mcmc_burn_in=burn_in,
                              show_progress = TRUE,
-                             order_data = FALSE)
+                             order_data = TRUE)
   # Make results
   results <- list(
     "unique_id" = uid,
